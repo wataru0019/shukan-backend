@@ -5,6 +5,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { ChatOpenAI } from '@langchain/openai'
 import { agent } from './agent.ts'
+import { workflow } from './workflow.ts'
 
 const app = new Hono()
 const api = new Hono()
@@ -31,9 +32,11 @@ api.get("/ai", async (c) => {
 
 api.post('/agent', async (c) => {
   const requestData = await c.req.json()
-  const res = await agent.invoke({ messages: [{ role: "user", content: requestData.query }] });
-  const agentReply = res.messages[1]?.content;
-  return c.json(agentReply)
+  // const res = await agent.invoke({ messages: [{ role: "user", content: requestData.query }] });
+  const res = await workflow.invoke({ messages: [{ role: "user", content: requestData.query }] });
+  console.log(res)
+  // const agentReply = res.messages[1]?.content;
+  return c.json(res)
   // return c.json({ ai_message: agentReply })
 })
 
